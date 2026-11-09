@@ -1,0 +1,20 @@
+# Local user data, logs, and session configurations
+sanitized_data/
+*.log
+*.cfg
+*.txt
+
+# Environment variables and API keys
+.env
+.env.*
+
+# Python bytecode and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
