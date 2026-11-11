@@ -7,7 +7,13 @@ import urllib.error
 
 # Configuration: Customize your local Ollama endpoint and model name here
 OLLAMA_URL = "http://localhost:11434/api/chat"
-MODEL_NAME = "support-assistant"
+MODEL_NAME = "llama3.2:latest"
+
+SYSTEM_PROMPT = (
+    "You are a gentle, trauma-informed support and recovery companion. "
+    "Respond with calm warmth, validation, and practical grounding steps. "
+    "Keep responses concise, clear, and easy to read. Never diagnose or replace medical/emergency care."
+)
 
 NL = "\n"
 ESC = "\033"
@@ -70,14 +76,14 @@ class SanctuaryCompanionApp:
     def display_ui(self):
         self.clear_screen()
         print(f"{self.G}==========================================================================")
-        print("   SANCTUARY & SUPPORT COMPANION v5.1 | LOCAL & PRIVACY-FIRST WORKSPACE")
+        print("   SANCTUARY & SUPPORT COMPANION v5.3 | LOCAL & PRIVACY-FIRST WORKSPACE")
         print("==========================================================================")
-        print(f"{NL}  {self.O}[1]{self.G} Trauma-Informed Support Companion (Local Ollama AI Chat)")
-        print(f"  {self.O}[2]{self.G} Evening Slumber: Visual Anchor & Box Breathing Pacer")
-        print(f"  {self.O}[3]{self.G} Morning Dawning: Log Dream Recall & Observer Status")
-        print(f"  {self.O}[4]{self.G} Clear Mind: Sift Daily Stressors & Sanitize Text Noise")
-        print(f"  {self.O}[5]{self.G} View Verified Crisis & Financial Support Directories")
-        print(f"  {self.O}[6]{self.G} Exit Application")
+        print(f"{NL}  {self.O}1.{self.G} Trauma-Informed Support Companion (Local Ollama AI Chat)")
+        print(f"  {self.O}2.{self.G} Evening Slumber: Visual Anchor & Box Breathing Pacer")
+        print(f"  {self.O}3.{self.G} Morning Dawning: Log Dream Recall & Observer Status")
+        print(f"  {self.O}4.{self.G} Clear Mind: Sift Daily Stressors & Sanitize Text Noise")
+        print(f"  {self.O}5.{self.G} View Verified Crisis & Financial Support Directories")
+        print(f"  {self.O}6.{self.G} Exit Application")
         print(f"{NL}{self.G}=========================================================================={self.R}")
 
     def get_verified_footer(self, country, state):
@@ -102,9 +108,12 @@ class SanctuaryCompanionApp:
     def chat_with_ollama(self, messages):
         payload = {
             "model": MODEL_NAME,
-            "messages": messages,
+            "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + messages,
             "stream": True,
-            "keep_alive": "15m"
+            "keep_alive": "15m",
+            "options": {
+                "num_ctx": 1024
+            }
         }
         req = urllib.request.Request(
             OLLAMA_URL,
@@ -113,7 +122,7 @@ class SanctuaryCompanionApp:
         )
         try:
             full_reply = []
-            with urllib.request.urlopen(req, timeout=90) as response:
+            with urllib.request.urlopen(req, timeout=60) as response:
                 print(f"{self.G}Companion:{self.W}")
                 for raw_line in response:
                     if not raw_line.strip():
@@ -169,7 +178,7 @@ class SanctuaryCompanionApp:
             first_turn = False
 
             messages.append({"role": "user", "content": prompt_to_send})
-            print(f"{NL}{self.S}Companion is loading model & thinking...{self.R}{NL}")
+            print(f"{NL}{self.S}Companion is thinking...{self.R}{NL}")
 
             reply = self.chat_with_ollama(messages)
             messages.append({"role": "assistant", "content": reply})
@@ -191,12 +200,11 @@ class SanctuaryCompanionApp:
         print(f"    {self.G}~~~  {self.B}~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  {self.G}~~~{self.R}")
 
     def cognitive_anchor(self):
-        self.clear_screen()
-        print(f"{self.O}--- EVENING ANCHOR & BOX BREATHING ---{self.R}{NL}")
-        user_input = input(f"{self.S}Enter your creative focus or peaceful setting for tonight:{NL}{self.G}> {self.W}")
-        clean_focus = self.clean_input(user_input) or "Peaceful twilight sanctuary"
-
 Use code with caution.
+self.clear_screen()
+print(f"{self.O}--- EVENING ANCHOR & BOX BREATHING ---{self.R}{NL}")
+user_input = input(f"{self.S}Enter your creative focus or peaceful setting for tonight:{NL}{self.G}> {self.W}")
+clean_focus = self.clean_input(user_input) or "Peaceful twilight sanctuary"
 print(f"{NL}{self.S}Optional: Paste a calming video or ambient music URL to keep open alongside your terminal")
 print("(Or press Enter to skip):")
 media_url = input(f"{self.G}> {self.W}").strip()
