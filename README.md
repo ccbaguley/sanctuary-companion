@@ -1,11 +1,9 @@
-# sanctuary-companion
-A local-first, privacy-focused terminal companion combining trauma-informed AI support (via local Ollama) with box breathing pacers, grounding routines, and dream recall tracking.
 # Sanctuary & Support Companion
 
 A local-first, privacy-focused terminal application combining **trauma-informed AI support** (powered by local Ollama models) with **grounding routines, box breathing pacers, and dream recall tracking**.
 
 ## Key Features
-* **Local Trauma-Informed AI Chat:** Connects privately to a local Ollama instance (`http://localhost:11434`) with zero chat history saved to disk.
+* **Local Trauma-Informed AI Chat:** Connects privately to a local Ollama instance (`http://localhost:11434`) with live word-by-word streaming and zero chat history saved to disk.
 * **Verified Support Directories:** Built-in offline access to U.S. national, state, and international crisis, housing, and medical financial aid resources.
 * **Evening Anchor & Box Breathing Pacer:** Guided 4-cycle box breathing countdown paired with a calming terminal visual landscape and customizable focus intentions.
 * **Morning Dream Recall Tracker:** Offline logger for tracking dream narratives and detachment/observer metrics.
@@ -13,7 +11,7 @@ A local-first, privacy-focused terminal application combining **trauma-informed 
 
 ## Prerequisites
 * **Python 3.8+** (Uses standard Python library modules only—no external `pip` packages required).
-* **Ollama** *(Optional, required only for Option 1 AI chat)*: [Install Ollama](https://ollama.com) and run `ollama serve` in the background.
+* **Ollama** *(Optional, required only for Option 1 AI chat)*: [Install Ollama](https://ollama.com), pull the default model (`ollama pull llama3.2`), and ensure the service is running (`ollama serve`).
 
 ## Quick Start
 1. Clone or download this repository:
@@ -27,7 +25,7 @@ A local-first, privacy-focused terminal application combining **trauma-informed 
    ```
 
 ## Customizing the Local AI Model
-By default, Option 1 looks for an Ollama model named `support-assistant`. You can build your own custom model in Ollama using a `Modelfile`, or edit `MODEL_NAME` at the top of `sanctuary_companion.py` to use any installed model (such as `llama3.2` or `mistral`).
+By default, Option 1 uses `llama3.2:latest` with a built-in trauma-informed system prompt. You can switch to any other installed Ollama model (such as `mistral` or `gemma2`) by editing `MODEL_NAME` at the top of `sanctuary_companion.py`.
 
 ## License
 This project is licensed under the MIT License. See the `LICENSE` file for details.
