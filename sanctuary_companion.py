@@ -1,5 +1,4 @@
 import os
-import sys
 import hashlib
 import time
 import json
@@ -71,7 +70,7 @@ class SanctuaryCompanionApp:
     def display_ui(self):
         self.clear_screen()
         print(f"{self.G}==========================================================================")
-        print("   SANCTUARY & SUPPORT COMPANION v5.0 | LOCAL & PRIVACY-FIRST WORKSPACE")
+        print("   SANCTUARY & SUPPORT COMPANION v5.1 | LOCAL & PRIVACY-FIRST WORKSPACE")
         print("==========================================================================")
         print(f"{NL}  {self.O}[1]{self.G} Trauma-Informed Support Companion (Local Ollama AI Chat)")
         print(f"  {self.O}[2]{self.G} Evening Slumber: Visual Anchor & Box Breathing Pacer")
@@ -104,7 +103,8 @@ class SanctuaryCompanionApp:
         payload = {
             "model": MODEL_NAME,
             "messages": messages,
-            "stream": False
+            "stream": True,
+            "keep_alive": "15m"
         }
         req = urllib.request.Request(
             OLLAMA_URL,
@@ -112,12 +112,22 @@ class SanctuaryCompanionApp:
             headers={"Content-Type": "application/json"}
         )
         try:
-            with urllib.request.urlopen(req) as response:
-                result = json.loads(response.read().decode("utf-8"))
-                return result["message"]["content"]
-        except urllib.error.URLError:
+            full_reply = []
+            with urllib.request.urlopen(req, timeout=90) as response:
+                print(f"{self.G}Companion:{self.W}")
+                for raw_line in response:
+                    if not raw_line.strip():
+                        continue
+                    chunk = json.loads(raw_line.decode("utf-8"))
+                    token = chunk.get("message", {}).get("content", "")
+                    if token:
+                        print(token, end="", flush=True)
+                        full_reply.append(token)
+                print()
+                return "".join(full_reply)
+        except Exception as e:
             return (
-                f"[Error: Could not connect to Ollama at {OLLAMA_URL}. "
+                f"[Error: Could not connect to Ollama at {OLLAMA_URL} ({e}). "
                 f"Ensure Ollama is running ('ollama serve') and model '{MODEL_NAME}' is installed.]"
             )
 
@@ -159,12 +169,13 @@ class SanctuaryCompanionApp:
             first_turn = False
 
             messages.append({"role": "user", "content": prompt_to_send})
-            print(f"{NL}{self.S}Companion is thinking...{self.R}{NL}")
+            print(f"{NL}{self.S}Companion is loading model & thinking...{self.R}{NL}")
 
             reply = self.chat_with_ollama(messages)
             messages.append({"role": "assistant", "content": reply})
 
-            print(f"{self.G}Companion:{self.W}{NL}{reply}")
+            if reply.startswith("[Error:"):
+                print(f"{self.O}{reply}{self.R}")
             print(f"{self.S}{verified_footer}")
             print(f"{self.G}-----------------------------------------------------------------{self.R}{NL}")
 
@@ -185,18 +196,15 @@ class SanctuaryCompanionApp:
         user_input = input(f"{self.S}Enter your creative focus or peaceful setting for tonight:{NL}{self.G}> {self.W}")
         clean_focus = self.clean_input(user_input) or "Peaceful twilight sanctuary"
 
-        print(f"{NL}{self.S}Optional: Paste a calming video or ambient music URL to keep open alongside your terminal")
-        print("(Or press Enter to skip):")
-        media_url = input(f"{self.G}> {self.W}").strip()
-
-        if media_url:
-            print(f"{NL}{self.G}[*] Visual Anchor Ready: {self.W}{media_url}{self.R}")
-            print(f"{self.S}(Keep your media window open side-by-side while breathing){self.R}")
-
-        input(f"{NL}{self.S}[Press Enter to begin 4 smooth cycles of Box Breathing...]{self.R}")
-
-        for cycle in range(1, 5):
 Use code with caution.
+print(f"{NL}{self.S}Optional: Paste a calming video or ambient music URL to keep open alongside your terminal")
+print("(Or press Enter to skip):")
+media_url = input(f"{self.G}> {self.W}").strip()
+if media_url:
+print(f"{NL}{self.G}[*] Visual Anchor Ready: {self.W}{media_url}{self.R}")
+print(f"{self.S}(Keep your media window open side-by-side while breathing){self.R}")
+input(f"{NL}{self.S}[Press Enter to begin 4 smooth cycles of Box Breathing...]{self.R}")
+for cycle in range(1, 5):
 self.clear_screen()
 print(f"{self.G}--- CYCLE {cycle} / 4 ---{self.R}{NL}")
 self.print_coded_landscape()
