@@ -44,7 +44,7 @@ VERIFIED_RESOURCES = {
 
 class UnifiedSanctuaryApp:
     def __init__(self):
-        self.storage_dir = os.path.expanduser("~/sovereign_core/sanitized_data/")
+        self.storage_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sanitized_data")
         if not os.path.exists(self.storage_dir):
             os.makedirs(self.storage_dir)
 
@@ -115,9 +115,6 @@ class UnifiedSanctuaryApp:
                         if t: print(t, end="", flush=True); out.append(t)
                 print()
                 return "".join(out)
-            if False:
-                result = json.loads(response.read().decode("utf-8"))
-                return result["message"]["content"]
         except urllib.error.URLError:
             return "[Error: Could not connect to Ollama. Make sure Ollama is running in the background with 'ollama serve'.]"
 
@@ -161,7 +158,6 @@ class UnifiedSanctuaryApp:
             reply = self.chat_with_ollama(messages)
             messages.append({"role": "assistant", "content": reply})
 
-            print(f"{self.G}Companion:{self.W}{NL}{reply}")
             print(f"{self.S}{verified_footer}")
             print(f"{self.G}-----------------------------------------------------------------{self.R}{NL}")
 
